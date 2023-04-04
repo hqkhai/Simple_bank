@@ -148,6 +148,7 @@ func TestDeleteAccountAPI(t *testing.T) {
 		accountID     int64
 		buildStubs    func(store *mock.MockStore)
 		checkResponse func(t *testing.T, recoder *httptest.ResponseRecorder)
+		setupAuth     func(t *testing.T, request *http.Request, tokenMaker token.Maker)
 	}{
 		{
 			name:      "InternalError",
@@ -160,6 +161,9 @@ func TestDeleteAccountAPI(t *testing.T) {
 			},
 			checkResponse: func(t *testing.T, recoder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusInternalServerError, recoder.Code)
+			},
+			setupAuth: func(t *testing.T, request *http.Request, tokenMaker token.Maker) {
+				addAuthorization(t, request, tokenMaker, authorizationTypeBearer, user.Username, time.Minute)
 			},
 		},
 	}
@@ -180,6 +184,8 @@ func TestDeleteAccountAPI(t *testing.T) {
 			url := fmt.Sprintf("/accounts/%d", tc.accountID)
 			request, err := http.NewRequest(http.MethodDelete, url, nil)
 			require.NoError(t, err)
+
+			tc.setupAuth(t, request, server.tokenMaker)
 
 			server.router.ServeHTTP(recorder, request)
 			tc.checkResponse(t, recorder)
