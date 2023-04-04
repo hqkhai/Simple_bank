@@ -2,25 +2,18 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	"net/http"
 	db "simplebank/db/sqlc"
+	"simplebank/token"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
 )
 
 type createAccountRequest struct {
-	Owner    string `json:"owner" binding:"required"`
+	//Owner    string `json:"owner" binding:"required"`
 	Currency string `json:"currency" binding:"required,currency"`
-}
-
-type getAccountRequest struct {
-	ID int64 `uri:"id" binding:"required,min=1"`
-}
-
-type listAccountRequest struct {
-	PageID   int32 `form:"page_id" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
 }
 
 type deleteAccountRequest struct {
@@ -33,8 +26,9 @@ func (server *Server) createAccount(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
+	authPayLoad := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.CreateAccountParams{
-		Owner:    req.Owner,
+		Owner:    authPayLoad.Username,
 		Currency: req.Currency,
 		Balance:  0,
 	}
@@ -71,6 +65,10 @@ func (server *Server) deleteAccount(ctx *gin.Context) {
 	})
 }
 
+type getAccountRequest struct {
+	ID int64 `uri:"id" binding:"required,min=1"`
+}
+
 func (server *Server) getAccount(ctx *gin.Context) {
 	/*var account db.Account
 
@@ -100,8 +98,19 @@ func (server *Server) getAccount(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+	authPayLoad := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 
+	if authPayLoad.Username != account.Owner {
+		err := errors.New("account doesn't belong to authenticated user")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
 	ctx.JSON(http.StatusOK, account)
+}
+
+type listAccountRequest struct {
+	PageID   int32 `form:"page_id" binding:"required,min=1"`
+	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
 }
 
 func (server *Server) listAccount(ctx *gin.Context) {
@@ -111,7 +120,9 @@ func (server *Server) listAccount(ctx *gin.Context) {
 		return
 	}
 
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 	arg := db.ListAccountsParams{
+		Owner:  authPayload.Username,
 		Limit:  req.PageSize,
 		Offset: (req.PageID - 1) * req.PageSize,
 	}
