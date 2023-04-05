@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://github.com/eficode/wait-for/releases/tag/v2.2.4
+HostUrl=https://objects.githubusercontent.com/github-production-release-asset-2e65be/90058566/b78f9918-6199-4da3-823d-0acef650aa2a?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20230405%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230405T130844Z&X-Amz-Expires=300&X-Amz-Signature=ec21e86e17da06cad8a9db991ad006bfa19d5f667d4d77275e2b338afbadcf53&X-Amz-SignedHeaders=host&actor_id=93475167&key_id=0&repo_id=90058566&response-content-disposition=attachment%3B%20filename%3Dwait-for&response-content-type=application%2Foctet-stream
