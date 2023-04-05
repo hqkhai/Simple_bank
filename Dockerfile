@@ -3,7 +3,7 @@ FROM golang:1.20.2-alpine3.17 as builder
 WORKDIR /app
 COPY . .
 RUN go build -o main main.go
-RUN apk add curl
+RUN apk --no-cache add curl
 RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate.linux-386.tar.gz | tar xvz
        
 #Run stage
@@ -18,5 +18,8 @@ COPY db/migration ./migration
 
 EXPOSE 8080
 CMD [ "/app/main" ]
-ENTRYPOINT [ "/app/start.sh" ]
+ENTRYPOINT ["/app/wait-for.sh", "postgres:5432", "--", "/app/start.sh"]
+
+
+    
 
