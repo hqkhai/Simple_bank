@@ -18,8 +18,7 @@ COPY db/migration ./migration
 
 EXPOSE 8080
 CMD [ "/app/main" ]
-ENTRYPOINT ["/app/wait-for.sh", "postgres:5432", "--", "/app/start.sh"]
-
+ENTRYPOINT [ "/app/start.sh" ]
 
     
 
