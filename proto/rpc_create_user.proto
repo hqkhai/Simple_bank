@@ -15,4 +15,5 @@ message CreateUserRequest {
 
 message CreateUserResponse {
     User user = 1;
+    int64 code =2;
 }

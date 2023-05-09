@@ -33,7 +33,7 @@ func ValidatePassword(value string) error {
 	return ValidateString(value, 6, 100)
 }
 
-func VailidateEmail(value string) error {
+func ValidateEmail(value string) error {
 	if err := ValidateString(value, 3, 200); err != nil {
 		return err
 	}

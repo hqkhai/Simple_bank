@@ -43,6 +43,7 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 
 	rsp := &pb.CreateUserResponse{
 		User: convertUser(user),
+		Code: 32,
 	}
 	return rsp, nil
 }
@@ -57,7 +58,7 @@ func validateCreateUserRequest(req *pb.CreateUserRequest) (violations []*errdeta
 	if err := val.ValidateFullName(req.GetFullName()); err != nil {
 		violations = append(violations, fieldViolation("full_name", err))
 	}
-	if err := val.VailidateEmail(req.GetEmail()); err != nil {
+	if err := val.ValidateEmail(req.GetEmail()); err != nil {
 		violations = append(violations, fieldViolation("email", err))
 	}
 	return violations
